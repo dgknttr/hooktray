@@ -1,7 +1,14 @@
 name: Deploy
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic image tag to deploy, for example v0.1.0
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -22,10 +29,26 @@ jobs:
     name: Build and Push Images
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ github.sha }}
+      image_tag: ${{ steps.meta.outputs.image_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Resolve image tag
+        id: meta
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            image_tag="${{ github.event.release.tag_name }}"
+          else
+            image_tag="${{ inputs.version }}"
+          fi
+
+          if [[ ! "${image_tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid semantic version tag: ${image_tag}" >&2
+            exit 1
+          fi
+
+          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -44,7 +67,7 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+            ${{ env.BACKEND_IMAGE }}:${{ steps.meta.outputs.image_tag }}
             ${{ env.BACKEND_IMAGE }}:latest
 
       - name: Build and push nginx frontend
@@ -54,7 +77,7 @@ jobs:
           file: ./nginx/Dockerfile
           push: true
           tags: |
-            ${{ env.NGINX_IMAGE }}:${{ github.sha }}
+            ${{ env.NGINX_IMAGE }}:${{ steps.meta.outputs.image_tag }}
             ${{ env.NGINX_IMAGE }}:latest
 
   deploy:

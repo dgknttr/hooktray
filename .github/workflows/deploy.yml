@@ -1,10 +1,8 @@
 name: Deploy
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
-    branches: [main]
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -14,7 +12,6 @@ jobs:
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout
@@ -32,7 +29,9 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/hooktray-backend:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/hooktray-backend:latest
+            ghcr.io/${{ github.repository_owner }}/hooktray-backend:${{ github.event.release.tag_name }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-backend:cache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-backend:cache,mode=max
 
@@ -42,7 +41,9 @@ jobs:
           context: .
           file: nginx/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/hooktray-nginx:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/hooktray-nginx:latest
+            ghcr.io/${{ github.repository_owner }}/hooktray-nginx:${{ github.event.release.tag_name }}
           build-args: NEXT_PUBLIC_API_URL=https://${{ secrets.DOMAIN }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-nginx:cache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-nginx:cache,mode=max

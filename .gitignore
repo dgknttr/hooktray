@@ -24,5 +24,8 @@ CLAUDE.md
 # Local planning/spec artifacts
 docs/
 
+# Local deploy scripts (keep in private infra repo)
+deploy.sh
+
 # Logs
 *.log

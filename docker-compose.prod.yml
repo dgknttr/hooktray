@@ -1,0 +1,27 @@
+services:
+  backend:
+    image: ghcr.io/dgknttr/hooktray-backend:${HOOKTRAY_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Cors__AllowedOrigins__0: https://${DOMAIN}
+    networks:
+      - internal
+
+  nginx:
+    image: ghcr.io/dgknttr/hooktray-nginx:${HOOKTRAY_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/ssl/hooktray:/etc/nginx/ssl:ro
+    environment:
+      DOMAIN: ${DOMAIN}
+    depends_on:
+      - backend
+    networks:
+      - internal
+
+networks:
+  internal:

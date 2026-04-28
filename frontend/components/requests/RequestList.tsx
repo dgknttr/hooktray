@@ -127,7 +127,7 @@ export default function RequestList() {
         <span className="text-xs text-muted-foreground/60 font-medium">HookTray</span>
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com/dogukantatar/hooktray"
+            href="https://github.com/dgknttr/hooktray"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-150"

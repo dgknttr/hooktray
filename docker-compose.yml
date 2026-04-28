@@ -1,0 +1,34 @@
+services:
+  backend:
+    image: ghcr.io/dgknttr/hooktray-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    networks:
+      - internal
+
+  nginx:
+    image: ghcr.io/dgknttr/hooktray-nginx:latest
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://${DOMAIN}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/ssl/hooktray:/etc/nginx/ssl:ro
+    environment:
+      DOMAIN: ${DOMAIN}
+    depends_on:
+      - backend
+    networks:
+      - internal
+
+networks:
+  internal:

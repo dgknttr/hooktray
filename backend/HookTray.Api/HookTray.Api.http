@@ -1,6 +1,9 @@
 @HookTray.Api_HostAddress = http://localhost:5221
 
-GET {{HookTray.Api_HostAddress}}/weatherforecast/
+### Create a hook session
+POST {{HookTray.Api_HostAddress}}/api/hooks
 Accept: application/json
 
-###
+### Check health
+GET {{HookTray.Api_HostAddress}}/health
+Accept: application/json

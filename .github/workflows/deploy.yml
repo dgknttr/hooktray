@@ -78,6 +78,7 @@ jobs:
           tags: |
             ${{ env.NGINX_IMAGE }}:${{ steps.meta.outputs.image_tag }}
             ${{ env.NGINX_IMAGE }}:latest
+          build-args: NEXT_PUBLIC_API_URL=https://${{ vars.DOMAIN }}
 
   deploy:
     name: Deploy Production

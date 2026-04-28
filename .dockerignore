@@ -1,0 +1,7 @@
+.git
+.claude
+docs
+backend
+*.md
+.DS_Store
+.env*

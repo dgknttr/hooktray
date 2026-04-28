@@ -1,26 +1,39 @@
 name: Deploy
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
 
-jobs:
-  deploy:
-    name: Build & Deploy
-    runs-on: ubuntu-latest
+concurrency:
+  group: production
+  cancel-in-progress: false
 
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ghcr.io/dgknttr/hooktray-backend
+  NGINX_IMAGE: ghcr.io/dgknttr/hooktray-nginx
+  APP_DIR: /srv/apps/hooktray
+
+jobs:
+  build:
+    name: Build and Push Images
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to GHCR
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -28,34 +41,54 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./backend
+          file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/hooktray-backend:latest
-            ghcr.io/${{ github.repository_owner }}/hooktray-backend:${{ github.event.release.tag_name }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-backend:cache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-backend:cache,mode=max
+            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+            ${{ env.BACKEND_IMAGE }}:latest
 
-      - name: Build and push nginx
+      - name: Build and push nginx frontend
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: nginx/Dockerfile
+          file: ./nginx/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/hooktray-nginx:latest
-            ghcr.io/${{ github.repository_owner }}/hooktray-nginx:${{ github.event.release.tag_name }}
-          build-args: NEXT_PUBLIC_API_URL=https://${{ secrets.DOMAIN }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-nginx:cache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/hooktray-nginx:cache,mode=max
+            ${{ env.NGINX_IMAGE }}:${{ github.sha }}
+            ${{ env.NGINX_IMAGE }}:latest
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /opt/hooktray
+  deploy:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production
+    steps:
+      - name: Checkout deploy files
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Upload compose file
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            'mkdir -p ${{ env.APP_DIR }}'
+          scp -i ~/.ssh/deploy_key docker-compose.prod.yml \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ env.APP_DIR }}/docker-compose.yml"
+
+      - name: Deploy
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" <<'ENDSSH'
+            set -euo pipefail
+            cd '${{ env.APP_DIR }}'
+            printf 'DOMAIN=%s\nHOOKTRAY_IMAGE_TAG=%s\n' \
+              '${{ vars.DOMAIN }}' \
+              '${{ needs.build.outputs.image_tag }}' > .env
             docker compose pull
             docker compose up -d --remove-orphans
             docker image prune -f
+          ENDSSH

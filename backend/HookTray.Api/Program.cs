@@ -3,8 +3,16 @@ using HookTray.Api.Options;
 using HookTray.Api.RateLimiting;
 using HookTray.Api.Services;
 using HookTray.Api.Sessions;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.Configure<WebhookOptions>(builder.Configuration.GetSection(WebhookOptions.Section));
 builder.Services.Configure<SessionSettings>(builder.Configuration.GetSection(SessionSettings.Section));
@@ -30,6 +38,7 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
      .AllowAnyMethod()));
 
 var app = builder.Build();
+app.UseForwardedHeaders();
 app.UseCors();
 
 app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));

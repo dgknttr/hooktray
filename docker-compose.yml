@@ -20,7 +20,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/ssl/hooktray:/etc/nginx/ssl:ro
     environment:
       DOMAIN: ${DOMAIN}
     depends_on:

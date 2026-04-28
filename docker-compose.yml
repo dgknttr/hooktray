@@ -1,5 +1,6 @@
 services:
   backend:
+    image: ghcr.io/dgknttr/hooktray-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -10,6 +11,7 @@ services:
       - internal
 
   nginx:
+    image: ghcr.io/dgknttr/hooktray-nginx:latest
     build:
       context: .
       dockerfile: nginx/Dockerfile

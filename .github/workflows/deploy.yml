@@ -22,7 +22,6 @@ env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE: ghcr.io/dgknttr/hooktray-backend
   NGINX_IMAGE: ghcr.io/dgknttr/hooktray-nginx
-  APP_DIR: /srv/apps/hooktray
 
 jobs:
   build:
@@ -85,6 +84,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment: production
+    env:
+      APP_DIR: ${{ vars.APP_DIR }}
     steps:
       - name: Checkout deploy files
         uses: actions/checkout@v4

@@ -19,10 +19,7 @@ services:
         NEXT_PUBLIC_API_URL: https://${DOMAIN}
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /etc/ssl/hooktray:/etc/nginx/ssl:ro
+      - "127.0.0.1:3000:80"
     environment:
       DOMAIN: ${DOMAIN}
     depends_on:

@@ -1,0 +1,50 @@
+name: Feature request
+description: Suggest an improvement for HookTray
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        HookTray is intentionally local-first and privacy-preserving. Features that add accounts, billing, server-side history, replay, forwarding, custom domains, teams, persistence, long-term retention, or distributed architecture need explicit approval before implementation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should HookTray do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This does not require server-side request history.
+        - label: This does not require accounts, billing, teams, or long-term retention.
+        - label: This keeps live debugging usable without payment.
+        - label: This preserves privacy-preserving logs.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Backend
+        - Frontend
+        - Developer experience
+        - Documentation
+        - Deployment
+        - Other
+    validations:
+      required: true

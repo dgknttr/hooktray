@@ -1,0 +1,28 @@
+# .NET build outputs
+bin/
+obj/
+publish/
+
+# User-specific files
+*.user
+*.suo
+.vs/
+.idea/
+*.DS_Store
+
+# Rider
+.idea/
+
+# Environment
+.env
+.env.local
+
+# Local AI assistant instructions
+AGENTS.md
+CLAUDE.md
+
+# Local planning/spec artifacts
+docs/
+
+# Logs
+*.log

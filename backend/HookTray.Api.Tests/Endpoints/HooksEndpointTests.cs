@@ -20,6 +20,7 @@ public class HooksEndpointTests : IClassFixture<WebApplicationFactory<Program>>
         var body = await response.Content.ReadFromJsonAsync<HookCreatedResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(body);
         Assert.NotEmpty(body!.Token);
+        Assert.StartsWith("ht1.", body.Token);
         Assert.Contains("/hooks/", body.HookUrl);
         Assert.Contains("/api/stream/", body.StreamUrl);
     }

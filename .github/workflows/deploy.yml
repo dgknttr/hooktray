@@ -53,9 +53,14 @@ jobs:
       - name: Validate production build config
         env:
           DOMAIN: ${{ vars.DOMAIN }}
+          TOKEN_SIGNING_KEY: ${{ secrets.TOKEN_SIGNING_KEY }}
         run: |
           if [[ -z "${DOMAIN}" ]]; then
             echo "Missing production environment variable: DOMAIN" >&2
+            exit 1
+          fi
+          if [[ -z "${TOKEN_SIGNING_KEY}" ]]; then
+            echo "Missing production secret: TOKEN_SIGNING_KEY" >&2
             exit 1
           fi
 
@@ -120,9 +125,10 @@ jobs:
           ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" <<'ENDSSH'
             set -euo pipefail
             cd '${{ env.APP_DIR }}'
-            printf 'DOMAIN=%s\nHOOKTRAY_IMAGE_TAG=%s\n' \
+            printf 'DOMAIN=%s\nHOOKTRAY_IMAGE_TAG=%s\nTOKEN_SIGNING_KEY=%s\n' \
               '${{ vars.DOMAIN }}' \
-              '${{ needs.build.outputs.image_tag }}' > .env
+              '${{ needs.build.outputs.image_tag }}' \
+              '${{ secrets.TOKEN_SIGNING_KEY }}' > .env
             docker compose pull
             docker compose up -d --remove-orphans
             docker image prune -f

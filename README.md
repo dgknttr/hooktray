@@ -178,7 +178,18 @@ Backend defaults live in `backend/HookTray.Api/appsettings.json`.
 | `Session:CleanupInterval` | Background cleanup interval |
 | `RateLimit:MaxWebhooksPerMinute` | Per-token webhook receive limit |
 | `RateLimit:MaxTokenCreationsPerMinutePerIp` | Token creation limit |
+| `RateLimit:MaxSessionRestoresPerMinutePerIp` | Same-token SSE session restore limit |
+| `Token:SigningKey` | Production signing key for new hook tokens |
 | `Cors:AllowedOrigins` | Frontend origins allowed to call the API |
+
+Production deployments must provide `Token:SigningKey`. For Docker Compose,
+set `TOKEN_SIGNING_KEY` in the deployment environment; for GitHub Actions,
+store it as a production environment secret. A self-hosted key can be generated
+with:
+
+```bash
+openssl rand -base64 32
+```
 
 Frontend API origin is configured with:
 

@@ -7,7 +7,11 @@ public static class HooksEndpoint
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/api/hooks", (HttpContext ctx, SessionStore store, IpRateLimiter ipRateLimiter) =>
+        app.MapPost("/api/hooks", (
+            HttpContext ctx,
+            SessionStore store,
+            IpRateLimiter ipRateLimiter,
+            TokenService tokenService) =>
         {
             var ipHash = IpHasher.Hash(ctx.Connection.RemoteIpAddress?.ToString() ?? "");
             if (!ipRateLimiter.IsAllowed(ipHash))
@@ -15,7 +19,7 @@ public static class HooksEndpoint
                     new { error = "rate_limit_exceeded" },
                     statusCode: StatusCodes.Status429TooManyRequests);
 
-            var token = TokenGenerator.Generate();
+            var token = tokenService.Generate();
             store.GetOrCreate(token);
 
             var baseUrl = $"{ctx.Request.Scheme}://{ctx.Request.Host}";

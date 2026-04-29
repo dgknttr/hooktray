@@ -17,6 +17,11 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.Configure<WebhookOptions>(builder.Configuration.GetSection(WebhookOptions.Section));
 builder.Services.Configure<SessionSettings>(builder.Configuration.GetSection(SessionSettings.Section));
 builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection(RateLimitOptions.Section));
+builder.Services.AddOptions<TokenOptions>()
+    .Bind(builder.Configuration.GetSection(TokenOptions.Section))
+    .Validate(o => !builder.Environment.IsProduction() || !string.IsNullOrWhiteSpace(o.SigningKey),
+        "Token:SigningKey is required in Production.")
+    .ValidateOnStart();
 
 builder.WebHost.ConfigureKestrel((ctx, o) =>
 {
@@ -28,6 +33,8 @@ builder.WebHost.ConfigureKestrel((ctx, o) =>
 builder.Services.AddSingleton<SessionStore>();
 builder.Services.AddSingleton<TokenRateLimiter>();
 builder.Services.AddSingleton<IpRateLimiter>();
+builder.Services.AddSingleton<SessionRestoreRateLimiter>();
+builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton<RequestSnapshotBuilder>();
 builder.Services.AddHostedService<SessionCleanupService>();
 

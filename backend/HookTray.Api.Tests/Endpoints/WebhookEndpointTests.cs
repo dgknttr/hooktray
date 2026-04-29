@@ -1,7 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using HookTray.Api.Options;
+using HookTray.Api.Sessions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 public class WebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -9,7 +15,12 @@ public class WebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>
 
     public WebhookEndpointTests(WebApplicationFactory<Program> factory)
     {
-        _client = factory.CreateClient();
+        _client = factory.WithWebHostBuilder(b =>
+            b.ConfigureAppConfiguration((_, cfg) =>
+                cfg.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Token:SigningKey"] = "test-token-signing-key-32-characters"
+                }))).CreateClient();
     }
 
     private async Task<string> CreateToken()
@@ -18,6 +29,11 @@ public class WebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>
         var b = await r.Content.ReadFromJsonAsync<HookCreatedResponse>(TestContext.Current.CancellationToken);
         return b!.Token;
     }
+
+    private static string CreateSignedTokenWithoutSession()
+        => new TokenService(
+            Options.Create(new TokenOptions { SigningKey = "test-token-signing-key-32-characters" }),
+            new TestHostEnvironment()).Generate();
 
     [Fact]
     public async Task PostHooks_Returns200WithDeliveredFalse_WhenNoSubscriber()
@@ -67,6 +83,15 @@ public class WebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>
     }
 
     [Fact]
+    public async Task PostHooks_DoesNotRestoreSession_ForSignedToken()
+    {
+        var token = CreateSignedTokenWithoutSession();
+        var response = await _client.PostAsync($"/hooks/{token}",
+            new StringContent("{}"), TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task PostHooks_Returns429_WhenRateLimitExceeded()
     {
         // First request should succeed
@@ -81,4 +106,12 @@ public class WebhookEndpointTests : IClassFixture<WebApplicationFactory<Program>
 
     private record HookCreatedResponse(string Token, string HookUrl, string StreamUrl);
     private record WebhookResponse(bool Ok, bool Delivered, string? Reason);
+
+    private sealed class TestHostEnvironment : IHostEnvironment
+    {
+        public string EnvironmentName { get; set; } = Environments.Development;
+        public string ApplicationName { get; set; } = "HookTray.Tests";
+        public string ContentRootPath { get; set; } = "";
+        public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
+    }
 }

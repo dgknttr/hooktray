@@ -5,6 +5,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       Cors__AllowedOrigins__0: https://${DOMAIN}
+      Token__SigningKey: ${TOKEN_SIGNING_KEY}
     networks:
       - internal
 

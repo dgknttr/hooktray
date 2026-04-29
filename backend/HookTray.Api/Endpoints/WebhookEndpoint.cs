@@ -17,6 +17,7 @@ public static class WebhookEndpoint
             HttpContext ctx,
             SessionStore store,
             TokenRateLimiter rateLimiter,
+            TokenService tokenService,
             RequestSnapshotBuilder snapshotBuilder,
             IOptions<WebhookOptions> webhookOptions,
             ILogger<Program> logger) =>
@@ -40,7 +41,7 @@ public static class WebhookEndpoint
 
             logger.LogInformation(
                 "Webhook received token_hash={TokenHash} method={Method} path={Path} size={Size} delivered={Delivered}",
-                TokenGenerator.HashToken(token),
+                tokenService.HashToken(token),
                 snapshot.Method,
                 snapshot.Path,
                 snapshot.SizeBytes,

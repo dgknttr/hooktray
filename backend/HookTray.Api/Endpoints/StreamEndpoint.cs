@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Channels;
 using HookTray.Api.Models;
+using HookTray.Api.RateLimiting;
 using HookTray.Api.Sessions;
 
 namespace HookTray.Api.Endpoints;
@@ -19,10 +20,23 @@ public static class StreamEndpoint
             string token,
             HttpContext ctx,
             SessionStore store,
+            TokenService tokenService,
+            SessionRestoreRateLimiter restoreRateLimiter,
             CancellationToken ct) =>
         {
             if (!store.TryGet(token, out var session))
-                return Results.NotFound(new { error = "unknown_token" });
+            {
+                if (!tokenService.IsRestorableToken(token))
+                    return Results.NotFound(new { error = "unknown_token" });
+
+                var ipHash = IpHasher.Hash(ctx.Connection.RemoteIpAddress?.ToString() ?? "");
+                if (!restoreRateLimiter.IsAllowed(ipHash))
+                    return Results.Json(
+                        new { error = "rate_limit_exceeded" },
+                        statusCode: StatusCodes.Status429TooManyRequests);
+
+                session = store.GetOrCreate(token);
+            }
 
             ctx.Response.Headers.Append("Content-Type", "text/event-stream");
             ctx.Response.Headers.Append("Cache-Control", "no-cache");

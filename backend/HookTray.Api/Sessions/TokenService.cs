@@ -52,18 +52,10 @@ public class TokenService
         if (!LegacyTokenRegex.IsMatch(randomPart) || !LegacyTokenRegex.IsMatch(signature))
             return false;
 
-        byte[] actualSignature;
-        try
-        {
-            actualSignature = Base64UrlDecode(signature);
-        }
-        catch (FormatException)
-        {
-            return false;
-        }
-
-        var expectedSignature = SignBytes($"{Prefix}.{randomPart}");
-        return CryptographicOperations.FixedTimeEquals(actualSignature, expectedSignature);
+        var expectedSignature = Sign($"{Prefix}.{randomPart}");
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.ASCII.GetBytes(signature),
+            Encoding.ASCII.GetBytes(expectedSignature));
     }
 
     public string HashToken(string token)
@@ -87,10 +79,4 @@ public class TokenService
             .Replace("/", "_")
             .TrimEnd('=');
 
-    private static byte[] Base64UrlDecode(string value)
-    {
-        var padded = value.Replace("-", "+").Replace("_", "/");
-        padded = padded.PadRight(padded.Length + ((4 - padded.Length % 4) % 4), '=');
-        return Convert.FromBase64String(padded);
-    }
 }

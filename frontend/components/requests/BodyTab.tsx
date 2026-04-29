@@ -1,82 +1,86 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useTheme } from "@/app/providers"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { formatJsonBody } from "@/lib/format"
 
 interface Props {
   body: string | null
   isBase64Encoded: boolean
 }
 
-function isJson(s: string): boolean {
-  try {
-    JSON.parse(s)
-    return true
-  } catch {
-    return false
-  }
-}
+type BodyViewMode = "raw" | "pretty"
 
 export default function BodyTab({ body, isBase64Encoded }: Props) {
-  const { resolvedTheme } = useTheme()
-  const [highlighted, setHighlighted] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-
-  const jsonBody = body && !isBase64Encoded && isJson(body) ? body : null
-
-  useEffect(() => {
-    if (!jsonBody) return
-    let cancelled = false
-    import("shiki").then(({ createHighlighter }) =>
-      createHighlighter({ themes: ["github-light", "github-dark"], langs: ["json"] })
-    ).then((hl) => {
-      if (cancelled) return
-      setHighlighted(
-        hl.codeToHtml(jsonBody, {
-          lang: "json",
-          theme: resolvedTheme === "dark" ? "github-dark" : "github-light",
-        })
-      )
-    }).catch(() => {})
-    return () => { cancelled = true }
-  }, [jsonBody, resolvedTheme])
-
-  async function handleCopy() {
-    if (!body) return
-    await navigator.clipboard.writeText(body)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const [viewMode, setViewMode] = useState<BodyViewMode>("raw")
 
   if (!body) {
     return <p className="text-sm text-muted-foreground p-4">No body</p>
   }
 
+  const prettyBody = !isBase64Encoded ? formatJsonBody(body) : null
+  const canPrettyPrint = prettyBody !== null
+  const activeViewMode = viewMode === "pretty" && canPrettyPrint ? "pretty" : "raw"
+  const visibleBody = activeViewMode === "pretty" ? prettyBody ?? body : body
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(visibleBody)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
-    <div className="relative">
-      <Button
-        variant="outline"
-        size="sm"
-        className="absolute top-2 right-2 z-10"
-        onClick={handleCopy}
-        aria-label="copy body"
-      >
-        {copied ? "Copied!" : <><Copy className="h-3.5 w-3.5 mr-1" />Copy body</>}
-      </Button>
+    <div className="min-w-0">
+      <div className="flex flex-col gap-2 border-b px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <ToggleGroup
+          value={[activeViewMode]}
+          onValueChange={(value: string[]) => {
+            const next = value[value.length - 1] as BodyViewMode | undefined
+            if (next) setViewMode(next)
+          }}
+          className="flex w-full flex-wrap gap-1 sm:w-fit"
+          aria-label="body view mode"
+        >
+          <ToggleGroupItem value="raw" size="sm" className="text-xs">
+            Raw
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="pretty"
+            size="sm"
+            className="text-xs"
+            disabled={!canPrettyPrint}
+          >
+            Pretty
+          </ToggleGroupItem>
+        </ToggleGroup>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full justify-center sm:w-fit"
+          onClick={handleCopy}
+          aria-label="copy body"
+        >
+          {copied ? (
+            "Copied!"
+          ) : (
+            <>
+              <Copy className="size-3.5" />
+              Copy
+            </>
+          )}
+        </Button>
+      </div>
 
       {isBase64Encoded ? (
         <p className="text-sm text-muted-foreground p-4">
           Binary content (base64 encoded)
         </p>
-      ) : highlighted ? (
-        <div
-          className="overflow-auto text-sm [&_pre]:p-4"
-          dangerouslySetInnerHTML={{ __html: highlighted }}
-        />
       ) : (
-        <pre className="p-4 text-sm overflow-auto whitespace-pre-wrap break-all">
-          {body}
+        <pre className="overflow-auto whitespace-pre-wrap break-words p-4 text-sm">
+          {visibleBody}
         </pre>
       )}
     </div>

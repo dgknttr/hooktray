@@ -11,3 +11,11 @@ export function formatRelativeTime(timestamp: number): string {
   if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`
   return `${Math.floor(diff / 3600000)}h ago`
 }
+
+export function formatJsonBody(body: string): string | null {
+  try {
+    return JSON.stringify(JSON.parse(body), null, 2)
+  } catch {
+    return null
+  }
+}

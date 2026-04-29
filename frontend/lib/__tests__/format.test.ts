@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { formatBytes, formatRelativeTime } from "@/lib/format"
+import { formatBytes, formatJsonBody, formatRelativeTime } from "@/lib/format"
 
 describe("formatBytes", () => {
   it("formats bytes under 1 KB", () => expect(formatBytes(500)).toBe("500 B"))
@@ -21,5 +21,17 @@ describe("formatRelativeTime", () => {
   })
   it("returns hours ago", () => {
     expect(formatRelativeTime(Date.now() - 7200000)).toBe("2h ago")
+  })
+})
+
+describe("formatJsonBody", () => {
+  it("pretty prints valid JSON", () => {
+    expect(formatJsonBody('{"key":"val","nested":{"count":1}}')).toBe(
+      '{\n  "key": "val",\n  "nested": {\n    "count": 1\n  }\n}'
+    )
+  })
+
+  it("returns null for invalid JSON", () => {
+    expect(formatJsonBody("plain text")).toBeNull()
   })
 })

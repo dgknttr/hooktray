@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import RequestListItem from "@/components/requests/RequestListItem"
-import type { RequestSnapshotWire } from "@/types"
+import type { LocalRequestSnapshot } from "@/types"
 
 vi.mock("@/hooks/useRelativeTime", () => ({
   useRelativeTime: () => "just now",
 }))
 
-function snap(method: string): RequestSnapshotWire {
+function snap(method: string, isRead = true): LocalRequestSnapshot {
   return {
     id: "s1",
     receivedAt: "2020-01-01T00:00:00Z",
@@ -21,6 +21,8 @@ function snap(method: string): RequestSnapshotWire {
     isBase64Encoded: false,
     bodyPreview: null,
     sizeBytes: 1024,
+    localOrdinal: 12,
+    isRead,
   }
 }
 
@@ -38,6 +40,21 @@ describe("RequestListItem", () => {
   it("renders formatted size", () => {
     render(<RequestListItem request={snap("GET")} isSelected={false} onClick={vi.fn()} isNew={false} />)
     expect(screen.getByText("1.0 KB")).toBeInTheDocument()
+  })
+
+  it("renders the local request number", () => {
+    render(<RequestListItem request={snap("POST")} isSelected={false} onClick={vi.fn()} isNew={false} />)
+    expect(screen.getByText("#12")).toBeInTheDocument()
+  })
+
+  it("renders unread requests in bold", () => {
+    render(<RequestListItem request={snap("POST", false)} isSelected={false} onClick={vi.fn()} isNew={false} />)
+    expect(screen.getByRole("button")).toHaveClass("font-semibold")
+  })
+
+  it("keeps selected styling", () => {
+    render(<RequestListItem request={snap("POST")} isSelected={true} onClick={vi.fn()} isNew={false} />)
+    expect(screen.getByRole("button")).toHaveClass("bg-accent")
   })
 
   it("applies pulse class when isNew is true", () => {

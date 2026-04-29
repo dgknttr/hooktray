@@ -16,3 +16,8 @@ export interface RequestSnapshotWire {
   bodyPreview: string | null
   sizeBytes: number
 }
+
+export interface LocalRequestSnapshot extends RequestSnapshotWire {
+  localOrdinal: number
+  isRead: boolean
+}

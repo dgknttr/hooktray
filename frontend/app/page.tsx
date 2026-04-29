@@ -3,7 +3,11 @@ import { useEffect, useRef } from "react"
 import { useConnectionStore } from "@/store/connectionStore"
 import { useRequestStore } from "@/store/requestStore"
 import { resolveInitialToken } from "@/lib/api"
-import { hydrate, addRequest as dbAddRequest } from "@/lib/db"
+import {
+  hydrate,
+  addRequest as dbAddRequest,
+  markRequestRead as dbMarkRequestRead,
+} from "@/lib/db"
 import { createSSEConnection } from "@/lib/sse"
 import AppShell from "@/components/layout/AppShell"
 
@@ -29,15 +33,20 @@ export default function Page() {
       setSession(token, hookUrl)
 
       const stored = await hydrate(token)
-      hydrateStore(stored)
+      const selectedId = hydrateStore(stored)
+      if (selectedId) {
+        dbMarkRequestRead(token, selectedId).catch((err) =>
+          console.warn("[HookTray] markRequestRead DB error:", err)
+        )
+      }
 
       cleanup = createSSEConnection(streamUrl, {
         onConnected: () => setStatus("connected"),
         onReconnecting: () => setStatus("reconnecting"),
         onDisconnected: () => setStatus("disconnected"),
         onRequest: (snapshot) => {
-          addRequest(snapshot)
-          dbAddRequest(token, snapshot).catch((err) =>
+          const localSnapshot = addRequest(snapshot)
+          dbAddRequest(token, localSnapshot).catch((err) =>
             console.warn("[HookTray] DB write error:", err)
           )
         },

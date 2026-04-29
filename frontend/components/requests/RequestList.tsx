@@ -15,8 +15,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { useRequestStore } from "@/store/requestStore"
 import { useConnectionStore } from "@/store/connectionStore"
-import { generateCurlExample } from "@/lib/curl"
 import RequestListItem from "./RequestListItem"
+import RequestListEmptyState from "./RequestListEmptyState"
 import type { MethodFilter } from "@/types"
 
 const FILTERS: MethodFilter[] = ["ALL", "GET", "POST", "PUT", "PATCH", "DELETE"]
@@ -103,21 +103,20 @@ export default function RequestList() {
       <div className="flex-1 overflow-y-auto">
         <div ref={topRef} />
         {filtered.length === 0 ? (
-          <div className="p-6 text-center text-muted-foreground">
-            <p className="text-sm mb-4">Waiting for your first request...</p>
-            {token && (
-              <pre className="text-xs text-left bg-muted rounded p-3 overflow-x-auto">
-                {generateCurlExample(token)}
-              </pre>
-            )}
-          </div>
+          requests.length === 0 ? (
+            <RequestListEmptyState />
+          ) : (
+            <div className="p-6 text-center text-sm text-muted-foreground">
+              No requests match this filter
+            </div>
+          )
         ) : (
           filtered.map((r) => (
             <RequestListItem
               key={r.id}
               request={r}
               isSelected={r.id === selectedId}
-              onClick={() => selectRequest(r.id)}
+              onClick={() => selectRequest(r.id, token ?? undefined)}
             />
           ))
         )}

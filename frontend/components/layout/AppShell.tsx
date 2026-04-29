@@ -2,12 +2,15 @@
 import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRequestStore } from "@/store/requestStore"
+import { useConnectionStore } from "@/store/connectionStore"
 import TopBar from "./TopBar"
 import RequestList from "@/components/requests/RequestList"
 import RequestDetail from "@/components/requests/RequestDetail"
+import SignalPulseEmptyState from "@/components/requests/SignalPulseEmptyState"
 
 export default function AppShell() {
   const { requests, selectedId, selectRequest } = useRequestStore()
+  const { token } = useConnectionStore()
   const selected = requests.find((r) => r.id === selectedId) ?? null
 
   return (
@@ -40,9 +43,13 @@ export default function AppShell() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-              Select a request to inspect
-            </div>
+            requests.length === 0 ? (
+              <SignalPulseEmptyState token={token} />
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
+                Select a request to inspect
+              </div>
+            )
           )}
         </div>
       </div>

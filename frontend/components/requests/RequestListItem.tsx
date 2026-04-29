@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRelativeTime } from "@/hooks/useRelativeTime"
 import { formatBytes } from "@/lib/format"
-import type { RequestSnapshotWire } from "@/types"
+import type { LocalRequestSnapshot } from "@/types"
 import { cn } from "@/lib/utils"
 
 const NEW_WINDOW_MS = 300
@@ -16,7 +16,7 @@ const METHOD_COLORS: Record<string, string> = {
 }
 
 interface Props {
-  request: RequestSnapshotWire
+  request: LocalRequestSnapshot
   isSelected: boolean
   isNew?: boolean
   onClick: () => void
@@ -44,6 +44,7 @@ export default function RequestListItem({ request, isSelected, isNew, onClick }:
       onKeyDown={(e) => e.key === "Enter" && onClick()}
       className={cn(
         "relative flex flex-col gap-0.5 px-3 py-2.5 cursor-pointer hover:bg-accent transition-colors duration-150",
+        !request.isRead && "font-semibold",
         isSelected && "bg-accent"
       )}
     >
@@ -52,6 +53,14 @@ export default function RequestListItem({ request, isSelected, isNew, onClick }:
       )}
       {/* Row 1: method badge + path */}
       <div className="flex items-center gap-2 min-w-0">
+        <span
+          className={cn(
+            "w-8 flex-shrink-0 text-right font-mono text-xs tabular-nums",
+            request.isRead ? "text-muted-foreground/70" : "text-foreground"
+          )}
+        >
+          #{request.localOrdinal}
+        </span>
         <span
           className={cn(
             "flex-shrink-0 rounded px-1.5 py-0.5 text-xs font-mono font-semibold leading-tight",
@@ -63,7 +72,7 @@ export default function RequestListItem({ request, isSelected, isNew, onClick }:
         <span className="truncate text-sm font-mono">{request.path}</span>
       </div>
       {/* Row 2: size · relative time */}
-      <div className="flex items-center gap-1 pl-0.5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1 pl-10 text-xs text-muted-foreground">
         <span>{formatBytes(request.sizeBytes)}</span>
         <span className="opacity-40">·</span>
         <span>{relativeTime}</span>

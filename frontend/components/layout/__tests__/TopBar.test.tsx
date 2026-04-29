@@ -56,4 +56,12 @@ describe("TopBar", () => {
     fireEvent.click(screen.getByRole("button", { name: /copy/i }))
     await waitFor(() => expect(screen.getByText("Copied!")).toBeInTheDocument())
   })
+
+  it("links to the GitHub repository", () => {
+    render(<TopBar />)
+    expect(screen.getByRole("link", { name: /view repository/i })).toHaveAttribute(
+      "href",
+      "https://github.com/dgknttr/hooktray"
+    )
+  })
 })

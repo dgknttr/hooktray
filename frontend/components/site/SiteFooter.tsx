@@ -5,7 +5,16 @@ export function SiteFooter() {
     <footer className="border-t border-border mt-16">
       <div className="max-w-4xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
         <p>Copyright 2026 Dogukan Tatar. MIT-licensed open source software.</p>
-        <nav className="flex items-center gap-5">
+        <nav className="flex flex-wrap items-center justify-center gap-5">
+          <Link href="/webhook-inspector" className="hover:text-foreground transition-colors">
+            Inspector
+          </Link>
+          <Link href="/webhook-tester" className="hover:text-foreground transition-colors">
+            Tester
+          </Link>
+          <Link href="/webhook-site-alternative" className="hover:text-foreground transition-colors">
+            Alternative
+          </Link>
           <a
             href="https://github.com/dgknttr/hooktray"
             target="_blank"

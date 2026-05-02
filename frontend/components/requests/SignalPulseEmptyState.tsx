@@ -1,21 +1,21 @@
 "use client"
 import Link from "next/link"
-import { BookOpen, Code, ListChecks, Radio, Server, ShieldCheck, Star } from "lucide-react"
+import { Code, FlaskConical, Radio, ScanSearch, Server, ShieldCheck, Star } from "lucide-react"
 import { generateCurlExample } from "@/lib/curl"
 
 const GITHUB_URL = "https://github.com/dgknttr/hooktray"
 const INFO_CARDS = [
   {
-    href: "/how-it-works",
-    title: "How it works",
-    description: "Stateless relay, SSE streaming, and browser-local history.",
-    icon: BookOpen,
+    href: "/webhook-inspector",
+    title: "Webhook inspector",
+    description: "Inspect headers, query strings, and body previews in real time.",
+    icon: ScanSearch,
   },
   {
-    href: "/use-cases",
-    title: "Use cases",
-    description: "Debug Stripe, GitHub, Shopify, Slack, or any HTTP webhook.",
-    icon: ListChecks,
+    href: "/webhook-tester",
+    title: "Webhook tester",
+    description: "Send a quick curl request or test a provider webhook setup.",
+    icon: FlaskConical,
   },
   {
     href: "/self-hosting",

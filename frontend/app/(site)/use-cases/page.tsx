@@ -126,6 +126,12 @@ curl -X PUT "https://hooktray.com/hooks/YOUR_TOKEN" \\
         <Link href="/" className="underline underline-offset-2 hover:text-muted-foreground">
           Open Inspector
         </Link>
+        <Link href="/webhook-inspector" className="underline underline-offset-2 hover:text-muted-foreground">
+          Webhook inspector
+        </Link>
+        <Link href="/webhook-tester" className="underline underline-offset-2 hover:text-muted-foreground">
+          Webhook tester
+        </Link>
         <Link href="/how-it-works" className="underline underline-offset-2 hover:text-muted-foreground">
           How it works
         </Link>

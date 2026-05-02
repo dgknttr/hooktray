@@ -19,5 +19,21 @@ describe("SignalPulseEmptyState", () => {
       "href",
       "https://github.com/dgknttr/hooktray"
     )
+    expect(screen.getByRole("link", { name: /how it works/i })).toHaveAttribute(
+      "href",
+      "/how-it-works"
+    )
+    expect(screen.getByRole("link", { name: /use cases/i })).toHaveAttribute(
+      "href",
+      "/use-cases"
+    )
+    expect(screen.getByRole("link", { name: /self-hosting/i })).toHaveAttribute(
+      "href",
+      "/self-hosting"
+    )
+    expect(screen.getByRole("link", { name: /privacy model/i })).toHaveAttribute(
+      "href",
+      "/privacy"
+    )
   })
 })

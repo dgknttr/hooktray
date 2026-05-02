@@ -1,23 +1,17 @@
 "use client"
+import dynamic from "next/dynamic"
 import { useRef, useEffect } from "react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
 import { useRequestStore } from "@/store/requestStore"
 import { useConnectionStore } from "@/store/connectionStore"
 import RequestListItem from "./RequestListItem"
 import RequestListEmptyState from "./RequestListEmptyState"
 import type { MethodFilter } from "@/types"
+
+const RequestListClearAction = dynamic(() => import("./RequestListClearAction"), {
+  ssr: false,
+  loading: () => null,
+})
 
 const FILTERS: MethodFilter[] = ["ALL", "GET", "POST", "PUT", "PATCH", "DELETE"]
 const FILTER_LABELS: Record<MethodFilter, string> = {
@@ -30,7 +24,7 @@ const FILTER_LABELS: Record<MethodFilter, string> = {
 }
 
 export default function RequestList() {
-  const { requests, selectedId, filter, autoScroll, selectRequest, setFilter, setAutoScroll, clearHistory } =
+  const { requests, selectedId, filter, autoScroll, selectRequest, setFilter, setAutoScroll } =
     useRequestStore()
   const { token } = useConnectionStore()
 
@@ -52,6 +46,7 @@ export default function RequestList() {
       <div className="p-3 border-b space-y-2">
         <ToggleGroup
           value={[filter]}
+          aria-label="Filter requests by method"
           onValueChange={(v: string[]) => {
             const last = v[v.length - 1] as MethodFilter | undefined
             if (last) setFilter(last)
@@ -76,27 +71,7 @@ export default function RequestList() {
             Auto-scroll
           </label>
 
-          <AlertDialog>
-            <AlertDialogTrigger
-              render={<Button variant="destructive" size="sm" className="text-xs h-6 px-2" />}
-            >
-              Clear
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Clear local history?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This only clears requests stored in this browser.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => token && clearHistory(token)}>
-                  Clear
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {requests.length > 0 ? <RequestListClearAction /> : null}
         </div>
       </div>
 
@@ -123,18 +98,18 @@ export default function RequestList() {
       </div>
 
       <div className="border-t px-3 py-2 flex items-center justify-between">
-        <span className="text-xs text-muted-foreground/60 font-medium">HookTray</span>
+        <span className="text-xs font-medium text-muted-foreground">HookTray</span>
         <div className="flex items-center gap-3">
           <a
             href="https://github.com/dgknttr/hooktray"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-150"
+            className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
           >
             GitHub
           </a>
           <span className="text-muted-foreground/30 text-xs">·</span>
-          <span className="text-xs text-muted-foreground/60">Open source</span>
+          <span className="text-xs text-muted-foreground">Open source</span>
         </div>
       </div>
     </div>

@@ -2,9 +2,9 @@
 import { Inbox, Rows3 } from "lucide-react"
 
 const PLACEHOLDER_ROWS = [
-  { number: "#3", method: "POST", path: "/webhooks/order" },
-  { number: "#2", method: "GET", path: "/health/check" },
-  { number: "#1", method: "POST", path: "/stripe/events" },
+  { number: "#3", method: "POST", path: "/webhooks/order", surface: "bg-background/90" },
+  { number: "#2", method: "GET", path: "/health/check", surface: "bg-muted/30" },
+  { number: "#1", method: "POST", path: "/stripe/events", surface: "bg-muted/20" },
 ]
 
 export default function RequestListEmptyState() {
@@ -27,11 +27,10 @@ export default function RequestListEmptyState() {
         </div>
 
         <div className="mt-4 space-y-2" aria-hidden="true">
-          {PLACEHOLDER_ROWS.map((row, index) => (
+          {PLACEHOLDER_ROWS.map((row) => (
             <div
               key={row.number}
-              className="rounded-md border bg-background/70 px-2.5 py-2 opacity-70"
-              style={{ opacity: 0.55 - index * 0.12 }}
+              className={`rounded-md border px-2.5 py-2 ${row.surface}`}
             >
               <div className="flex min-w-0 items-center gap-2">
                 <span className="w-7 flex-shrink-0 text-right font-mono text-xs text-muted-foreground">

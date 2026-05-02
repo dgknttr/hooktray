@@ -35,6 +35,20 @@ server {
         proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
     }
 
+    # Fingerprinted Next.js build assets can be cached aggressively.
+    location ^~ /_next/static/ {
+        try_files $uri =404;
+        access_log off;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Public static assets are stable; purge CDN/cache when replacing them.
+    location ~* \.(?:svg|ico|png|jpg|jpeg|webp|woff2?)$ {
+        try_files $uri =404;
+        access_log off;
+        add_header Cache-Control "public, max-age=31536000";
+    }
+
     # Frontend static files
     location / {
         try_files $uri $uri.html $uri/ /index.html;

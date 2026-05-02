@@ -1,8 +1,35 @@
 "use client"
-import { Code, Radio, Star } from "lucide-react"
+import Link from "next/link"
+import { Code, FlaskConical, Radio, ScanSearch, Server, ShieldCheck, Star } from "lucide-react"
 import { generateCurlExample } from "@/lib/curl"
 
 const GITHUB_URL = "https://github.com/dgknttr/hooktray"
+const INFO_CARDS = [
+  {
+    href: "/webhook-inspector",
+    title: "Webhook inspector",
+    description: "Inspect headers, query strings, and body previews in real time.",
+    icon: ScanSearch,
+  },
+  {
+    href: "/webhook-tester",
+    title: "Webhook tester",
+    description: "Send a quick curl request or test a provider webhook setup.",
+    icon: FlaskConical,
+  },
+  {
+    href: "/self-hosting",
+    title: "Self-hosting",
+    description: "Run HookTray with Docker, .NET, nginx, and explicit config.",
+    icon: Server,
+  },
+  {
+    href: "/privacy",
+    title: "Privacy model",
+    description: "No server-side payload history by default. Local-first by design.",
+    icon: ShieldCheck,
+  },
+] as const
 
 interface Props {
   token?: string | null
@@ -50,6 +77,28 @@ export default function SignalPulseEmptyState({ token }: Props) {
           <Star className="size-3.5" />
           Star on GitHub
         </a>
+      </div>
+
+      <div className="mt-6 grid w-full max-w-2xl gap-2 sm:grid-cols-2">
+        {INFO_CARDS.map(({ href, title, description, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="group rounded-md border bg-background/70 p-3 text-left transition-colors hover:bg-muted/50"
+          >
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex size-7 flex-shrink-0 items-center justify-center rounded-md border bg-muted/40 text-muted-foreground group-hover:text-foreground">
+                <Icon className="size-3.5" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-medium">{title}</span>
+                <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
+                  {description}
+                </span>
+              </span>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   )

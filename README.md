@@ -238,3 +238,7 @@ HookTray is open-source and community-supported.
 ## License
 
 HookTray is released under the [MIT License](LICENSE).
+
+## Trademark
+
+The HookTray name and logo are trademarks of Dogukan Tatar. The code is MIT-licensed and freely forkable, but forks must be published under a different name. See [TRADEMARK.md](TRADEMARK.md) for details.

@@ -1,12 +1,21 @@
 "use client"
+import dynamic from "next/dynamic"
 import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRequestStore } from "@/store/requestStore"
 import { useConnectionStore } from "@/store/connectionStore"
 import TopBar from "./TopBar"
 import RequestList from "@/components/requests/RequestList"
-import RequestDetail from "@/components/requests/RequestDetail"
 import SignalPulseEmptyState from "@/components/requests/SignalPulseEmptyState"
+
+const RequestDetail = dynamic(() => import("@/components/requests/RequestDetail"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+      Loading request...
+    </div>
+  ),
+})
 
 export default function AppShell() {
   const { requests, selectedId, selectRequest } = useRequestStore()
@@ -17,7 +26,7 @@ export default function AppShell() {
     <div className="flex flex-col h-screen bg-background text-foreground">
       <TopBar />
 
-      <div className="flex flex-1 overflow-hidden">
+      <main className="flex flex-1 overflow-hidden">
         <div
           className={`${selected ? "hidden md:flex" : "flex"} flex-col w-full md:w-80 border-r flex-shrink-0`}
         >
@@ -52,7 +61,7 @@ export default function AppShell() {
             )
           )}
         </div>
-      </div>
+      </main>
     </div>
   )
 }

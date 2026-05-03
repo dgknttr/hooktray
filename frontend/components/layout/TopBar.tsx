@@ -14,9 +14,13 @@ import { useTheme } from "@/app/providers"
 import type { Theme } from "@/types"
 
 const STATUS_CONFIG = {
-  connected: { label: "Connected", dot: "●", color: "text-green-500" },
-  reconnecting: { label: "Reconnecting", dot: "◌", color: "text-yellow-500 animate-pulse" },
-  disconnected: { label: "Disconnected", dot: "○", color: "text-red-500" },
+  connected: { label: "Connected", dot: "●", color: "text-green-700 dark:text-green-400" },
+  reconnecting: {
+    label: "Reconnecting",
+    dot: "◌",
+    color: "text-amber-700 dark:text-amber-300",
+  },
+  disconnected: { label: "Disconnected", dot: "○", color: "text-red-700 dark:text-red-400" },
 } as const
 const GITHUB_URL = "https://github.com/dgknttr/hooktray"
 

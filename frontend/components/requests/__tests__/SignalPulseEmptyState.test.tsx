@@ -35,5 +35,13 @@ describe("SignalPulseEmptyState", () => {
       "href",
       "/privacy"
     )
+    expect(screen.getByRole("link", { name: /stripe webhook guide/i })).toHaveAttribute(
+      "href",
+      "/guides/test-stripe-webhooks"
+    )
+    expect(screen.getByRole("link", { name: /shopify webhook guide/i })).toHaveAttribute(
+      "href",
+      "/guides/test-shopify-webhooks"
+    )
   })
 })

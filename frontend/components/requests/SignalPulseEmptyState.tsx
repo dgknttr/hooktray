@@ -1,6 +1,16 @@
 "use client"
 import Link from "next/link"
-import { Code, FlaskConical, Radio, ScanSearch, Server, ShieldCheck, Star } from "lucide-react"
+import {
+  Code,
+  CreditCard,
+  FlaskConical,
+  Radio,
+  ScanSearch,
+  Server,
+  ShieldCheck,
+  ShoppingBag,
+  Star,
+} from "lucide-react"
 import { generateCurlExample } from "@/lib/curl"
 
 const GITHUB_URL = "https://github.com/dgknttr/hooktray"
@@ -29,6 +39,18 @@ const INFO_CARDS = [
     description: "No server-side payload history by default. Local-first by design.",
     icon: ShieldCheck,
   },
+  {
+    href: "/guides/test-stripe-webhooks",
+    title: "Stripe webhook guide",
+    description: "Connect a test destination and inspect Stripe events.",
+    icon: CreditCard,
+  },
+  {
+    href: "/guides/test-shopify-webhooks",
+    title: "Shopify webhook guide",
+    description: "Subscribe to a topic and inspect Shopify deliveries.",
+    icon: ShoppingBag,
+  },
 ] as const
 
 interface Props {
@@ -53,7 +75,7 @@ export default function SignalPulseEmptyState({ token }: Props) {
       </p>
 
       {token && (
-        <pre className="mt-4 w-full max-w-md overflow-x-auto rounded-md bg-muted p-3 text-left text-xs">
+        <pre className="mt-4 w-full max-w-md whitespace-pre-wrap break-all rounded-md bg-muted p-3 text-left text-xs leading-5">
           {generateCurlExample(token)}
         </pre>
       )}

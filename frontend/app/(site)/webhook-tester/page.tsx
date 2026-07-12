@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowRight, CreditCard, ShoppingBag } from "lucide-react"
+
+import { ExistingHookEndpoint } from "@/components/site/ExistingHookEndpoint"
 
 export const metadata: Metadata = {
   title: "Webhook Tester - Test Webhook Payloads with a Temporary URL",
@@ -33,6 +36,8 @@ export default function WebhookTesterPage() {
         what your integration sends.
       </p>
 
+      <ExistingHookEndpoint />
+
       <section className="mb-12 space-y-4">
         <h2 className="text-xl font-semibold">Quick webhook test</h2>
         <ol className="list-inside list-decimal space-y-2 text-sm text-muted-foreground">
@@ -62,6 +67,50 @@ export default function WebhookTesterPage() {
             <div key={item} className="rounded-lg border border-border p-3 text-sm text-muted-foreground">
               {item}
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-12 space-y-4">
+        <h2 className="text-xl font-semibold">Provider guides</h2>
+        <p className="text-muted-foreground">
+          Follow provider-specific setup and troubleshooting steps for common webhook platforms.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            {
+              href: "/guides/test-stripe-webhooks",
+              title: "Test Stripe webhooks",
+              description: "Configure Workbench, trigger test events, and inspect Stripe headers and payloads.",
+              icon: CreditCard,
+            },
+            {
+              href: "/guides/test-shopify-webhooks",
+              title: "Test Shopify webhooks",
+              description: "Subscribe to Shopify topics and troubleshoot deliveries, HMAC headers, and retries.",
+              icon: ShoppingBag,
+            },
+          ].map(({ href, title, description, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className="group rounded-md border p-4 transition-colors hover:bg-muted/50"
+            >
+              <span className="flex items-start gap-3">
+                <span className="flex size-9 flex-shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground group-hover:text-foreground">
+                  <Icon className="size-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center justify-between gap-2 font-medium">
+                    {title}
+                    <ArrowRight className="size-4 flex-shrink-0 text-muted-foreground" />
+                  </span>
+                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">
+                    {description}
+                  </span>
+                </span>
+              </span>
+            </Link>
           ))}
         </div>
       </section>

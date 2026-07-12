@@ -66,6 +66,27 @@ export default function WebhookTesterPage() {
         </div>
       </section>
 
+      <section className="mb-12 space-y-4">
+        <h2 className="text-xl font-semibold">Provider guides</h2>
+        <p className="text-muted-foreground">
+          Follow provider-specific setup and troubleshooting steps for common webhook platforms.
+        </p>
+        <div className="flex flex-wrap gap-4 text-sm">
+          <Link
+            href="/guides/test-stripe-webhooks"
+            className="underline underline-offset-2 hover:text-muted-foreground"
+          >
+            Test Stripe webhooks
+          </Link>
+          <Link
+            href="/guides/test-shopify-webhooks"
+            className="underline underline-offset-2 hover:text-muted-foreground"
+          >
+            Test Shopify webhooks
+          </Link>
+        </div>
+      </section>
+
       <div className="mt-12 flex flex-wrap gap-4 border-t border-border pt-8 text-sm">
         <Link href="/" className="underline underline-offset-2 hover:text-muted-foreground">
           Start testing

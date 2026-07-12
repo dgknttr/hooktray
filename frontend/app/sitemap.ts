@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/`, changeFrequency: "monthly", priority: 1 },
     { url: `${siteUrl}/webhook-inspector`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${siteUrl}/webhook-tester`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${siteUrl}/guides/test-stripe-webhooks`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/guides/test-shopify-webhooks`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/webhook-site-alternative`, changeFrequency: "monthly", priority: 0.85 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/how-it-works`, changeFrequency: "monthly", priority: 0.8 },

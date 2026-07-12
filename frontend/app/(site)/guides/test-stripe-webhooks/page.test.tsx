@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
 import StripeWebhookGuidePage, { metadata } from "./page"
@@ -21,11 +21,22 @@ describe("StripeWebhookGuidePage", () => {
     expect(screen.getByText("payment_intent.succeeded")).toBeInTheDocument()
     expect(screen.getByText("invoice.paid")).toBeInTheDocument()
     expect(screen.getByText("customer.subscription.updated")).toBeInTheDocument()
+    const setupHeading = screen.getByRole("heading", {
+      name: "Set up a test destination in Stripe Workbench",
+    })
+    const setupSection = setupHeading.closest("section")
+
+    expect(setupSection).not.toBeNull()
+    const setup = within(setupSection as HTMLElement)
+    expect(setup.getByRole("list").tagName).toBe("OL")
+    expect(setup.getByText(/copy the generated hook URL/i)).toBeInTheDocument()
+    expect(setup.getByText(/create a new event destination/i)).toBeInTheDocument()
+    const setupSteps = setup.getAllByRole("listitem").map((item) => item.textContent)
     expect(
-      screen.getByRole("heading", { name: "Set up a test destination in Stripe Workbench" }),
-    ).toBeInTheDocument()
-    expect(screen.getByRole("list").tagName).toBe("OL")
-    expect(screen.getAllByRole("listitem")).toHaveLength(7)
+      setupSteps.some((step) => /performing the corresponding test-mode action/i.test(step ?? "")),
+    ).toBe(true)
+    expect(setup.getByText("stripe trigger payment_intent.succeeded")).toBeInTheDocument()
+    expect(setup.queryByText(/use Workbench to send a test event/i)).not.toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Open HookTray" })).toHaveAttribute("href", "/")
     expect(screen.getByRole("link", { name: "Webhook tester" })).toHaveAttribute(
       "href",

@@ -62,7 +62,12 @@ export default function StripeWebhookGuidePage() {
           <li>Open Webhooks, create a new event destination, and choose your Stripe account as the source.</li>
           <li>Select the event types your integration needs, then continue to the destination settings.</li>
           <li>Choose a webhook endpoint and paste your generated HookTray URL as the endpoint URL.</li>
-          <li>Create the destination, then use Workbench to send a test event.</li>
+          <li>Create the destination. Use Workbench to inspect its configuration and delivery attempts.</li>
+          <li>
+            Trigger a subscribed event by performing the corresponding test-mode action in Stripe
+            Dashboard or with Stripe CLI, for example:{" "}
+            <code className="font-mono text-sm">stripe trigger payment_intent.succeeded</code>.
+          </li>
           <li>Return to HookTray and select the incoming request to inspect it.</li>
         </ol>
       </section>

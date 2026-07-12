@@ -50,6 +50,37 @@ export default function ShopifyWebhookGuidePage() {
       </section>
 
       <section className="mb-12 space-y-4">
+        <h2 className="text-xl font-semibold">Subscribe to the topic</h2>
+        <p className="text-muted-foreground">
+          For app configuration, add a subscription to{ " "}
+          <code className="font-mono text-sm">shopify.app.toml</code>. Replace the example URI with
+          the temporary HookTray URL you copied:
+        </p>
+        <pre className="overflow-x-auto border border-border p-4 text-sm text-muted-foreground">
+          <code>{`[[webhooks.subscriptions]]
+topics = ["orders/create"]
+uri = "https://your-temporary-hook-url"`}</code>
+        </pre>
+        <p className="text-muted-foreground">
+          As a programmatic alternative, create the subscription with the GraphQL Admin API. The
+          topics and destination URI are configured through your chosen path; do not configure the
+          same subscription both ways.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Follow the{ " "}
+          <a
+            href="https://shopify.dev/docs/apps/build/webhooks/subscribe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={externalLinkClasses}
+          >
+            Shopify subscription documentation
+          </a>{ " "}
+          for the current configuration and Admin API workflows.
+        </p>
+      </section>
+
+      <section className="mb-12 space-y-4">
         <h2 className="text-xl font-semibold">Test a real store action</h2>
         <ol className="list-outside list-decimal space-y-3 pl-5 text-muted-foreground">
           <li>
@@ -58,7 +89,7 @@ export default function ShopifyWebhookGuidePage() {
             </Link>{ " "}
             and copy the temporary hook URL.
           </li>
-          <li>Configure that URL as the destination for the Shopify topic you want to test.</li>
+          <li>Choose app configuration or the GraphQL Admin API and subscribe the URL to your topic.</li>
           <li>
             Perform the corresponding real store action, such as creating an order, updating a
             product, or creating a refund.
@@ -98,8 +129,21 @@ export default function ShopifyWebhookGuidePage() {
           Check <code className="font-mono text-sm">X-Shopify-Topic</code> for the delivered topic,{ " "}
           <code className="font-mono text-sm">X-Shopify-Webhook-Id</code> for the unique delivery
           identifier, and <code className="font-mono text-sm">X-Shopify-Hmac-Sha256</code> for the
-          signature supplied by Shopify. Inspect the JSON payload and note the response status and
-          response behavior expected from your eventual application handler.
+          signature supplied by Shopify. Inspect the JSON payload in the incoming request. HookTray
+          shows the incoming request and returns its acknowledgement.
+        </p>
+        <p className="text-muted-foreground">
+          Inspect response status and timing for your eventual application handler in Shopify
+          delivery logs. See the{ " "}
+          <a
+            href="https://shopify.dev/docs/apps/build/webhooks/troubleshoot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={externalLinkClasses}
+          >
+            Shopify delivery logs guidance
+          </a>
+          .
         </p>
         <p className="border-l-2 border-border pl-4 text-sm text-muted-foreground">
           HookTray displays the HMAC header but does not currently validate it. Your application

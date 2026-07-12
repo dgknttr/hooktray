@@ -29,6 +29,16 @@ describe("ShopifyWebhookGuidePage", () => {
     expect(screen.getByText(/real store action is needed for end-to-end confidence/i)).toBeInTheDocument()
   })
 
+  it("provides actionable Shopify subscription paths", () => {
+    render(<ShopifyWebhookGuidePage />)
+
+    expect(screen.getByText(/shopify\.app\.toml/i)).toBeInTheDocument()
+    expect(screen.getByText(/topics = \["orders\/create"\]/i)).toBeInTheDocument()
+    expect(screen.getByText(/uri = "https:\/\/.*temporary/i)).toBeInTheDocument()
+    expect(screen.getByText(/programmatic alternative.*GraphQL Admin API/i)).toBeInTheDocument()
+    expect(screen.getByText(/topics and.*destination.*chosen path/i)).toBeInTheDocument()
+  })
+
   it("sets the inspection and HMAC validation boundary", () => {
     render(<ShopifyWebhookGuidePage />)
 
@@ -36,7 +46,10 @@ describe("ShopifyWebhookGuidePage", () => {
     expect(screen.getByText(/X-Shopify-Webhook-Id/i)).toBeInTheDocument()
     expect(screen.getByText(/X-Shopify-Hmac-Sha256/i)).toBeInTheDocument()
     expect(screen.getByText(/inspect the JSON payload/i)).toBeInTheDocument()
-    expect(screen.getByText(/response status/i)).toBeInTheDocument()
+    expect(screen.getByText(/HookTray shows the incoming request and returns its acknowledgement/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/response status and timing.*Shopify delivery logs/i),
+    ).toBeInTheDocument()
     expect(
       screen.getByText(/HookTray displays the HMAC header but does not currently validate it/i),
     ).toBeInTheDocument()
@@ -68,11 +81,19 @@ describe("ShopifyWebhookGuidePage", () => {
     const externalLinks = [
       ["Shopify webhooks documentation", "https://shopify.dev/docs/apps/build/webhooks"],
       [
+        "Shopify subscription documentation",
+        "https://shopify.dev/docs/apps/build/webhooks/subscribe",
+      ],
+      [
         "Shopify delivery verification documentation",
         "https://shopify.dev/docs/apps/build/webhooks/verify-deliveries",
       ],
       [
         "Shopify webhook troubleshooting documentation",
+        "https://shopify.dev/docs/apps/build/webhooks/troubleshoot",
+      ],
+      [
+        "Shopify delivery logs guidance",
         "https://shopify.dev/docs/apps/build/webhooks/troubleshoot",
       ],
       [

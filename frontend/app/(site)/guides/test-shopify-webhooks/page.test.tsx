@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
 import ShopifyWebhookGuidePage, { metadata } from "./page"
@@ -32,7 +32,14 @@ describe("ShopifyWebhookGuidePage", () => {
   it("provides actionable Shopify subscription paths", () => {
     render(<ShopifyWebhookGuidePage />)
 
-    expect(screen.getByText(/shopify\.app\.toml/i)).toBeInTheDocument()
+    const setupSection = screen.getByRole("heading", { name: "Subscribe to the topic" }).closest("section")
+
+    expect(setupSection).not.toBeNull()
+    const setup = within(setupSection as HTMLElement)
+    const copyUrlStep = setup.getByText(/open HookTray.*copy the temporary hook URL/i)
+    const appConfigStep = setup.getByText(/shopify\.app\.toml/i)
+
+    expect(copyUrlStep.compareDocumentPosition(appConfigStep) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(screen.getByText(/topics = \["orders\/create"\]/i)).toBeInTheDocument()
     expect(screen.getByText(/uri = "https:\/\/.*temporary/i)).toBeInTheDocument()
     expect(screen.getByText(/programmatic alternative.*GraphQL Admin API/i)).toBeInTheDocument()

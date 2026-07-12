@@ -52,6 +52,12 @@ export default function ShopifyWebhookGuidePage() {
       <section className="mb-12 space-y-4">
         <h2 className="text-xl font-semibold">Subscribe to the topic</h2>
         <p className="text-muted-foreground">
+          <Link href="/" className="font-medium text-foreground underline underline-offset-2">
+            Open HookTray and copy the temporary hook URL
+          </Link>{ " "}
+          before configuring a Shopify subscription.
+        </p>
+        <p className="text-muted-foreground">
           For app configuration, add a subscription to{ " "}
           <code className="font-mono text-sm">shopify.app.toml</code>. Replace the example URI with
           the temporary HookTray URL you copied:
@@ -83,13 +89,6 @@ uri = "https://your-temporary-hook-url"`}</code>
       <section className="mb-12 space-y-4">
         <h2 className="text-xl font-semibold">Test a real store action</h2>
         <ol className="list-outside list-decimal space-y-3 pl-5 text-muted-foreground">
-          <li>
-            <Link href="/" className="font-medium text-foreground underline underline-offset-2">
-              Open the HookTray inspector
-            </Link>{ " "}
-            and copy the temporary hook URL.
-          </li>
-          <li>Choose app configuration or the GraphQL Admin API and subscribe the URL to your topic.</li>
           <li>
             Perform the corresponding real store action, such as creating an order, updating a
             product, or creating a refund.

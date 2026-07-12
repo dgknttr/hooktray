@@ -151,6 +151,7 @@ git commit -m "feat: add Stripe webhook testing guide"
 - Explain that HookTray displays the HMAC header but does not currently validate it.
 - Link only to relevant official Shopify pages:
   - `https://shopify.dev/docs/apps/build/webhooks`
+  - `https://shopify.dev/docs/apps/build/webhooks/subscribe`
   - `https://shopify.dev/docs/apps/build/webhooks/verify-deliveries`
   - `https://shopify.dev/docs/apps/build/webhooks/troubleshoot`
   - `https://shopify.dev/docs/api/shopify-cli/app/app-webhook-trigger`

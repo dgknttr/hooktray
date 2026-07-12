@@ -1,15 +1,13 @@
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import sitemap from "./sitemap"
 
-const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
+beforeEach(() => {
+  vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://hooktray.com")
+})
 
 afterEach(() => {
-  if (originalSiteUrl === undefined) {
-    delete process.env.NEXT_PUBLIC_SITE_URL
-  } else {
-    process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl
-  }
+  vi.unstubAllEnvs()
 })
 
 describe("sitemap", () => {
@@ -33,7 +31,7 @@ describe("sitemap", () => {
   })
 
   it("uses the environment base URL and removes trailing slashes", () => {
-    process.env.NEXT_PUBLIC_SITE_URL = "https://preview.hooktray.test///"
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://preview.hooktray.test///")
 
     const entries = sitemap()
 

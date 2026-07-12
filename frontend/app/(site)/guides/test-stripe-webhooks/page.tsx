@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+import { ExistingHookEndpoint } from "@/components/site/ExistingHookEndpoint"
+
 export const metadata: Metadata = {
   title: "Stripe Webhook Tester - Test Events with a Temporary Endpoint",
   description:
@@ -25,6 +27,8 @@ export default function StripeWebhookGuidePage() {
         Use a temporary HookTray endpoint to inspect Stripe webhook requests in real time.
         No account is required, and request history stays in your browser.
       </p>
+
+      <ExistingHookEndpoint />
 
       <section className="mb-12 space-y-4">
         <h2 className="text-xl font-semibold">What Stripe webhooks send</h2>

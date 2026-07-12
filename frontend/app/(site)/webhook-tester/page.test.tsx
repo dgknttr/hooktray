@@ -7,11 +7,11 @@ describe("WebhookTesterPage", () => {
   it("links to provider-specific webhook guides", () => {
     render(<WebhookTesterPage />)
 
-    expect(screen.getByRole("link", { name: "Test Stripe webhooks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Test Stripe webhooks/i })).toHaveAttribute(
       "href",
       "/guides/test-stripe-webhooks",
     )
-    expect(screen.getByRole("link", { name: "Test Shopify webhooks" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Test Shopify webhooks/i })).toHaveAttribute(
       "href",
       "/guides/test-shopify-webhooks",
     )

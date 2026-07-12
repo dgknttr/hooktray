@@ -1,6 +1,16 @@
 "use client"
 import Link from "next/link"
-import { Code, FlaskConical, Radio, ScanSearch, Server, ShieldCheck, Star } from "lucide-react"
+import {
+  Code,
+  CreditCard,
+  FlaskConical,
+  Radio,
+  ScanSearch,
+  Server,
+  ShieldCheck,
+  ShoppingBag,
+  Star,
+} from "lucide-react"
 import { generateCurlExample } from "@/lib/curl"
 
 const GITHUB_URL = "https://github.com/dgknttr/hooktray"
@@ -28,6 +38,18 @@ const INFO_CARDS = [
     title: "Privacy model",
     description: "No server-side payload history by default. Local-first by design.",
     icon: ShieldCheck,
+  },
+  {
+    href: "/guides/test-stripe-webhooks",
+    title: "Stripe webhook guide",
+    description: "Connect a test destination and inspect Stripe events.",
+    icon: CreditCard,
+  },
+  {
+    href: "/guides/test-shopify-webhooks",
+    title: "Shopify webhook guide",
+    description: "Subscribe to a topic and inspect Shopify deliveries.",
+    icon: ShoppingBag,
   },
 ] as const
 

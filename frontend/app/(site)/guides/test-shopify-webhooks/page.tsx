@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+import { ExistingHookEndpoint } from "@/components/site/ExistingHookEndpoint"
+
 export const metadata: Metadata = {
   title: "Shopify Webhook Tester - Inspect Deliveries with a Temporary Endpoint",
   description:
@@ -25,6 +27,8 @@ export default function ShopifyWebhookGuidePage() {
         Use a temporary HookTray endpoint to inspect what Shopify delivers in real time. No account
         is required, and request history stays in your browser.
       </p>
+
+      <ExistingHookEndpoint />
 
       <section className="mb-12 space-y-4">
         <h2 className="text-xl font-semibold">Choose a Shopify webhook topic</h2>

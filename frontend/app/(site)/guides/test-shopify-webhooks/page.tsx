@@ -151,9 +151,10 @@ export default function ShopifyWebhookGuidePage() {
           <div>
             <h3 className="font-medium text-foreground">Retries and repeated failures</h3>
             <p>
-              Shopify retries failed deliveries according to its delivery policy, and a subscription
-              can be removed after repeated failures. Monitor failures and keep the destination
-              available.
+              Shopify retries failed HTTPS deliveries up to eight times over four hours. Webhook
+              subscriptions created through the Admin API can be automatically deleted after repeated
+              failures. Subscriptions declared in app configuration are not automatically deleted for
+              delivery failures.
             </p>
           </div>
         </div>

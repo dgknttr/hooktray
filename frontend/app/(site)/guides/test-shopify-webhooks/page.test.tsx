@@ -51,8 +51,9 @@ describe("ShopifyWebhookGuidePage", () => {
     expect(screen.getByText(/webhook ID as an idempotency key/i)).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: /unordered events/i })).toBeInTheDocument()
     expect(screen.getByText(/five-second response timeout/i)).toBeInTheDocument()
-    expect(screen.getByText(/Shopify retries failed deliveries/i)).toBeInTheDocument()
-    expect(screen.getByText(/subscription can be removed after repeated failures/i)).toBeInTheDocument()
+    expect(screen.getByText(/retries failed HTTPS deliveries up to eight times over four hours/i)).toBeInTheDocument()
+    expect(screen.getByText(/Admin API.*automatically deleted after repeated failures/i)).toBeInTheDocument()
+    expect(screen.getByText(/app configuration.*not automatically deleted/i)).toBeInTheDocument()
   })
 
   it("links to the tool, related guide, official docs, and source", () => {

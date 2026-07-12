@@ -75,7 +75,7 @@ export default function SignalPulseEmptyState({ token }: Props) {
       </p>
 
       {token && (
-        <pre className="mt-4 w-full max-w-md overflow-x-auto rounded-md bg-muted p-3 text-left text-xs">
+        <pre className="mt-4 w-full max-w-md whitespace-pre-wrap break-all rounded-md bg-muted p-3 text-left text-xs leading-5">
           {generateCurlExample(token)}
         </pre>
       )}
